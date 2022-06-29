@@ -1,4 +1,9 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:ungserviceweb/models/user_model.dart';
+import 'package:ungserviceweb/states/my_service.dart';
 import 'package:ungserviceweb/utility/my_constant.dart';
 import 'package:ungserviceweb/utility/my_dialog.dart';
 import 'package:ungserviceweb/widgets/show_button.dart';
@@ -57,6 +62,7 @@ class _AuthenState extends State<Authen> {
                 title: 'Have Space ?', subTitle: 'Please Fill Every Blank');
           } else {
             //No Space
+            processCheckAuthen();
           }
         },
       ),
@@ -126,5 +132,42 @@ class _AuthenState extends State<Authen> {
         ],
       ),
     );
+  }
+
+  Future<void> processCheckAuthen() async {
+    String path =
+        'https://www.androidthai.in.th/egat/checkLoginUng.php?isAdd=true&user=$user';
+    await Dio().get(path).then((value) {
+      print('## value ==> $value');
+
+      if (value.toString() == 'null') {
+        MyDialog(context: context).normalDialog(
+            title: 'User False ?', subTitle: 'No $user in my Database');
+      } else {
+        var result = json.decode(value.data);
+        print('## result = $result');
+        for (var element in result) {
+          UserModel userModel = UserModel.fromMap(element);
+          if (password == userModel.password) {
+            MyDialog(context: context).normalDialog(
+                pressFunc: () {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MyService(),
+                      ),
+                      (route) => false);
+                },
+                label: 'Go to Service',
+                title: 'Authen Success',
+                subTitle: 'Welcome ${userModel.name} in App');
+          } else {
+            MyDialog(context: context).normalDialog(
+                title: 'Password False ?',
+                subTitle: 'Please Try Again Password False');
+          }
+        }
+      }
+    });
   }
 }
