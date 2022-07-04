@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ungserviceweb/models/user_model.dart';
 import 'package:ungserviceweb/states/my_service.dart';
 import 'package:ungserviceweb/utility/my_constant.dart';
@@ -137,7 +138,7 @@ class _AuthenState extends State<Authen> {
   Future<void> processCheckAuthen() async {
     String path =
         'https://www.androidthai.in.th/egat/checkLoginUng.php?isAdd=true&user=$user';
-    await Dio().get(path).then((value) {
+    await Dio().get(path).then((value) async {
       print('## value ==> $value');
 
       if (value.toString() == 'null') {
@@ -149,6 +150,10 @@ class _AuthenState extends State<Authen> {
         for (var element in result) {
           UserModel userModel = UserModel.fromMap(element);
           if (password == userModel.password) {
+            SharedPreferences preferences =
+                await SharedPreferences.getInstance();
+            preferences.setString('data', userModel.name);
+
             MyDialog(context: context).normalDialog(
                 pressFunc: () {
                   Navigator.pushAndRemoveUntil(
