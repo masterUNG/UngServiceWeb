@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ungserviceweb/states/authen.dart';
@@ -16,6 +17,9 @@ Future<void> main() async {
   HttpOverrides.global = MyHttpOverride();
 
   WidgetsFlutterBinding.ensureInitialized();
+
+  Firebase.initializeApp();
+
   SharedPreferences preferences = await SharedPreferences.getInstance();
   var result = preferences.getString('data');
   print('result ===>> $result');
