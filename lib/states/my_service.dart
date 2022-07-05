@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ungserviceweb/bodys/list_photo.dart';
 import 'package:ungserviceweb/bodys/take_photo.dart';
 import 'package:ungserviceweb/bodys/web_service.dart';
 import 'package:ungserviceweb/utility/my_constant.dart';
@@ -20,12 +21,14 @@ class _MyServiceState extends State<MyService> {
   var bodys = <Widget>[
     const WebService(),
     const TakePhoto(),
+    const ListPhoto(),
   ];
   int indexBody = 0;
 
   var titles = <String>[
     'Web Service',
     'Take Photo',
+    'List All Photo',
   ];
 
   @override
@@ -43,7 +46,8 @@ class _MyServiceState extends State<MyService> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true,
+      appBar: AppBar(
+        centerTitle: true,
         title: ShowText(
           text: titles[indexBody],
           textStyle: MyConstant().h2WhiteStyle(),
@@ -91,6 +95,19 @@ class _MyServiceState extends State<MyService> {
               Navigator.pop(context);
               setState(() {
                 indexBody = 1;
+              });
+            },
+          ),
+          Divider(
+            color: MyConstant.dark,
+          ),
+          ShowMenu(
+            iconData: Icons.list,
+            title: titles[2],
+            pressFunc: () {
+              Navigator.pop(context);
+              setState(() {
+                indexBody = 2;
               });
             },
           ),
